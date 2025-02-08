@@ -1,1 +1,15 @@
-npm run lint-staged
+# Validate branch name
+BRANCH_NAME=$(git branch --show-current)
+BRANCH_PATTERN="^(main|master|develop|feature|bugfix|hotfix|release|chore)\/[a-zA-Z0-9._-]+$"
+
+if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "master" ] || [ "$BRANCH_NAME" = "develop" ]; then
+    # Allow main branches to pass
+    :
+elif ! [[ $BRANCH_NAME =~ $BRANCH_PATTERN ]]; then
+    echo "Branch name '$BRANCH_NAME' does not follow the convention:"
+    echo "main, master, develop, or feature/*, bugfix/*, hotfix/*, release/*, chore/*"
+    exit 1
+fi
+
+# Run other pre-commit checks
+npm run pre-commit

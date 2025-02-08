@@ -9,6 +9,8 @@ dist/
 web-build/
 expo-env.d.ts
 serviceAccountKey.json
+ios/
+android/
 
 # Native
 *.orig.*
