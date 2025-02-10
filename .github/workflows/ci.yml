@@ -12,7 +12,7 @@ permissions:
   checks: write
 
 jobs:
-  test:
+  lint-test:
     runs-on: ubuntu-latest
 
     steps:
