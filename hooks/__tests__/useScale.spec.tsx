@@ -23,7 +23,7 @@ describe("useScale", () => {
     });
   });
 
-  it("should initialize with default values", () => {
+  it("initializes with default values", () => {
     const { result } = renderHook(() => useScale());
 
     expect(result.current.weightData).toEqual({
@@ -34,12 +34,12 @@ describe("useScale", () => {
     expect(result.current.weightDataPoints).toEqual([]);
   });
 
-  it("should start scanning when initialized", () => {
+  it("starts scanning when initialized", () => {
     renderHook(() => useScale());
     expect(mockBleManager.startDeviceScan).toHaveBeenCalled();
   });
 
-  it("should not start scanning when BLE is not initialized", () => {
+  it("does not start scanning when BLE is not initialized", () => {
     (useBLE as jest.Mock).mockReturnValue({
       bleManager: mockBleManager,
       bleInitialized: false,
@@ -49,7 +49,7 @@ describe("useScale", () => {
     expect(mockBleManager.startDeviceScan).not.toHaveBeenCalled();
   });
 
-  it("should update weight data when valid data is received", () => {
+  it("updates weight data when valid data is received", () => {
     const { result } = renderHook(() => useScale());
 
     // Create mock manufacturer data (weight of 75.5kg)
@@ -153,7 +153,7 @@ describe("useScale", () => {
     });
   });
 
-  it("should reset weight data", () => {
+  it("resets weight data", () => {
     const { result } = renderHook(() => useScale());
 
     act(() => {
@@ -168,7 +168,7 @@ describe("useScale", () => {
     expect(result.current.weightDataPoints).toEqual([]);
   });
 
-  it("should stop scanning on unmount", () => {
+  it("stops scanning on unmount", () => {
     const { unmount } = renderHook(() => useScale());
     unmount();
     expect(mockBleManager.stopDeviceScan).toHaveBeenCalled();

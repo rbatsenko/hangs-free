@@ -4,6 +4,7 @@ import { StyleSheet, Pressable, Text, Platform } from "react-native";
 import { LineGraph } from "react-native-graph";
 
 import ParallaxScrollView from "@/components/common/ParallaxScrollView";
+import { CycleWeightDisplay } from "@/components/CycleWeightDisplay";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { ThemedText } from "@/components/ui/ThemedText";
@@ -12,6 +13,7 @@ import { UserWeightInput } from "@/components/UserWeightInput";
 import { WeightDisplay } from "@/components/WeightDisplay";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useScale } from "@/hooks/useScale";
+import { useStopwatch } from "@/hooks/useStopwatch";
 import { HandData, HandType, CycleData, WeightDataPoint } from "@/types/weight";
 
 const getPercentage = (value: number, base: number) => (value / base) * 100;
@@ -47,6 +49,7 @@ export default function LiftScreen() {
   );
   const [userWeight, setUserWeight] = useState("");
 
+  const elapsedTime = useStopwatch(cycleStarted);
   const { weightData, weightDataPoints, reset } = useScale();
 
   const handleWeightChange = useCallback((weight: string) => {
@@ -95,13 +98,12 @@ export default function LiftScreen() {
 
       if (cycleStarted && currentWeight < 1) {
         setCycleStarted(false);
+        const finalPoint = { weight: 0, timestamp: latestPoint.timestamp };
         setCycleData((prev) => ({
           ...prev,
-          [selectedHand]: [
-            ...prev[selectedHand],
-            { weight: 0, timestamp: latestPoint.timestamp },
-          ],
+          [selectedHand]: [...prev[selectedHand], finalPoint],
         }));
+        setCurrentPoint(finalPoint);
       }
 
       setHandData((prev) => ({
@@ -217,14 +219,18 @@ export default function LiftScreen() {
         <WeightDisplay data={handData[selectedHand]} />
 
         <ThemedView style={styles.chartContainer}>
-          {cycleData[selectedHand].length > 0 && currentPoint && (
-            <ThemedText>
-              {currentPoint.weight}
-              {handData[selectedHand].unit} at{" "}
-              {new Date(currentPoint.timestamp).toLocaleString("pl-PL", {
-                fractionalSecondDigits: 3,
-              })}
-            </ThemedText>
+          {cycleData[selectedHand].length > 0 && (
+            <CycleWeightDisplay
+              cycleStarted={cycleStarted}
+              currentWeight={weightData?.weight ?? 0}
+              unit={handData[selectedHand].unit}
+              elapsedTime={elapsedTime}
+              currentPoint={currentPoint}
+              lastPoint={
+                cycleData[selectedHand][cycleData[selectedHand].length - 1]
+              }
+              cycleStartTime={cycleData[selectedHand][0].timestamp}
+            />
           )}
           {cycleData[selectedHand].length >= 2 && (
             <LineGraph

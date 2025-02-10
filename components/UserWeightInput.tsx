@@ -29,6 +29,7 @@ export const UserWeightInput = ({
         onChangeText={onChangeText}
         value={value}
         placeholder="Weight"
+        placeholderTextColor="#808080"
         keyboardType="numeric"
       />
     </ThemedView>

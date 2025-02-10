@@ -4,13 +4,13 @@ import { render, screen } from "@testing-library/react-native";
 
 import { WeightDisplay } from "../WeightDisplay";
 
-describe("WeightDisplay", () => {
-  const mockData = {
-    weight: 42.5,
-    maxWeight: 45.0,
-    unit: "kg" as const,
-  };
+const mockData = {
+  weight: 42.5,
+  maxWeight: 45.0,
+  unit: "kg" as const,
+};
 
+describe("WeightDisplay", () => {
   it("renders weight and max weight correctly", () => {
     render(<WeightDisplay data={mockData} />);
 

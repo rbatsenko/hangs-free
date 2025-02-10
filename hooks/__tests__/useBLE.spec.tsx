@@ -47,7 +47,7 @@ describe("useBLE", () => {
       Platform.OS = "ios";
     });
 
-    it("should initialize BLE without requesting permissions", async () => {
+    it("initializes BLE without requesting permissions", async () => {
       const { result } = renderHook(() => useBLE());
 
       await waitFor(() => {
@@ -69,7 +69,7 @@ describe("useBLE", () => {
         Platform.Version = "30";
       });
 
-      it("should request only FINE_LOCATION permission", async () => {
+      it("requests only FINE_LOCATION permission", async () => {
         const requestSpy = jest
           .spyOn(PermissionsAndroid, "request")
           .mockResolvedValue(PermissionsAndroid.RESULTS.GRANTED);
@@ -88,7 +88,7 @@ describe("useBLE", () => {
         });
       });
 
-      it("should not initialize if permission is denied", async () => {
+      it("does not initialize if permission is denied", async () => {
         jest
           .spyOn(PermissionsAndroid, "request")
           .mockResolvedValue(PermissionsAndroid.RESULTS.DENIED);
@@ -106,7 +106,7 @@ describe("useBLE", () => {
         Platform.Version = "31";
       });
 
-      it("should request multiple permissions", async () => {
+      it("requests multiple permissions", async () => {
         const requestMultipleSpy = jest
           .spyOn(PermissionsAndroid, "requestMultiple")
           .mockResolvedValue({
@@ -133,7 +133,7 @@ describe("useBLE", () => {
         });
       });
 
-      it("should not initialize if any permission is denied", async () => {
+      it("does not initialize if any permission is denied", async () => {
         jest.spyOn(PermissionsAndroid, "requestMultiple").mockResolvedValue({
           "android.permission.BLUETOOTH_CONNECT":
             PermissionsAndroid.RESULTS.GRANTED,
@@ -151,7 +151,7 @@ describe("useBLE", () => {
       });
     });
 
-    it("should handle errors during initialization", async () => {
+    it("handles errors during initialization", async () => {
       jest
         .spyOn(PermissionsAndroid, "request")
         .mockRejectedValue(new Error("Permission request failed"));
