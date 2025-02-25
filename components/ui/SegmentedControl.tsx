@@ -1,5 +1,7 @@
 import { StyleSheet, Pressable, View, useColorScheme } from "react-native";
 
+import { colors } from "@/constants/theme-colors";
+
 import { ThemedText } from "./ThemedText";
 
 interface SegmentedControlProps {
@@ -16,7 +18,7 @@ export function SegmentedControl({
   style,
 }: SegmentedControlProps) {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const theme = colorScheme ?? "light";
 
   return (
     <View
@@ -24,7 +26,7 @@ export function SegmentedControl({
         styles.container,
         style,
         {
-          backgroundColor: isDark ? "#2C2C2E" : "#E9E9EB",
+          backgroundColor: colors[theme].segmentedControlBackground,
         },
       ]}
     >
@@ -35,7 +37,7 @@ export function SegmentedControl({
             styles.segment,
             selectedIndex === index && [
               styles.selectedSegment,
-              { backgroundColor: isDark ? "#4C4C4E" : "#FFFFFF" },
+              { backgroundColor: colors[theme].segmentedControlSelected },
             ],
           ]}
           onPress={() => onChange(index)}

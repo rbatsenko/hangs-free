@@ -18,7 +18,9 @@ export const WeightDisplay = ({ data }: WeightDisplayProps) => {
     <>
       <ThemedView style={{ ...styles.weightContainer, marginBottom: 12 }}>
         <ThemedText style={isIpad ? styles.weightTextIpad : styles.weightText}>
-          {data ? `${data.weight}${data.unit}` : "No data"}
+          {data
+            ? `${data.weight > 1 ? data.weight : 0}${data.unit}`
+            : "No data"}
         </ThemedText>
       </ThemedView>
 

@@ -9,6 +9,10 @@ jest.mock("../useBLE", () => ({
   useBLE: jest.fn(),
 }));
 
+const renderUseScale = () => {
+  return renderHook(() => useScale({ selectedDevice: "whc06" }));
+};
+
 describe("useScale", () => {
   const mockBleManager = {
     startDeviceScan: jest.fn(),
@@ -24,18 +28,18 @@ describe("useScale", () => {
   });
 
   it("initializes with default values", () => {
-    const { result } = renderHook(() => useScale());
+    const { result } = renderUseScale();
 
     expect(result.current.weightData).toEqual({
       weight: 0,
-      maxWeight: 0,
       unit: "kg",
     });
     expect(result.current.weightDataPoints).toEqual([]);
   });
 
   it("starts scanning when initialized", () => {
-    renderHook(() => useScale());
+    renderUseScale();
+
     expect(mockBleManager.startDeviceScan).toHaveBeenCalled();
   });
 
@@ -45,12 +49,12 @@ describe("useScale", () => {
       bleInitialized: false,
     });
 
-    renderHook(() => useScale());
+    renderUseScale();
     expect(mockBleManager.startDeviceScan).not.toHaveBeenCalled();
   });
 
   it("updates weight data when valid data is received", () => {
-    const { result } = renderHook(() => useScale());
+    const { result } = renderUseScale();
 
     // Create mock manufacturer data (weight of 75.5kg)
     // 75.5 * 100 = 7550 = 0x1D7E in hex = [29, 126] in decimal
@@ -70,7 +74,6 @@ describe("useScale", () => {
 
     expect(result.current.weightData).toEqual({
       weight: 75.5,
-      maxWeight: 75.5,
       unit: "kg",
     });
     expect(result.current.weightDataPoints).toHaveLength(1);
@@ -80,7 +83,7 @@ describe("useScale", () => {
   });
 
   it("adds more weight data points when the weight changes", () => {
-    const { result } = renderHook(() => useScale());
+    const { result } = renderUseScale();
 
     // Create mock manufacturer data (weight of 75.5kg)
     // 75.5 * 100 = 7550 = 0x1D7E in hex = [29, 126] in decimal
@@ -119,7 +122,6 @@ describe("useScale", () => {
 
     expect(result.current.weightData).toEqual({
       weight: 76.5,
-      maxWeight: 76.5,
       unit: "kg",
     });
     expect(result.current.weightDataPoints).toHaveLength(2);
@@ -144,7 +146,6 @@ describe("useScale", () => {
 
     expect(result.current.weightData).toEqual({
       weight: 70,
-      maxWeight: 76.5,
       unit: "kg",
     });
     expect(result.current.weightDataPoints).toHaveLength(3);
@@ -154,7 +155,7 @@ describe("useScale", () => {
   });
 
   it("resets weight data", () => {
-    const { result } = renderHook(() => useScale());
+    const { result } = renderUseScale();
 
     act(() => {
       result.current.reset();
@@ -162,14 +163,13 @@ describe("useScale", () => {
 
     expect(result.current.weightData).toEqual({
       weight: 0,
-      maxWeight: 0,
       unit: "kg",
     });
     expect(result.current.weightDataPoints).toEqual([]);
   });
 
   it("stops scanning on unmount", () => {
-    const { unmount } = renderHook(() => useScale());
+    const { unmount } = renderUseScale();
     unmount();
     expect(mockBleManager.stopDeviceScan).toHaveBeenCalled();
   });

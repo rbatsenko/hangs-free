@@ -10,10 +10,10 @@ import { ThemedText } from "@/components/ui/ThemedText";
 import { ThemedView } from "@/components/ui/ThemedView";
 import { UserWeightInput } from "@/components/UserWeightInput";
 import { WeightDisplay } from "@/components/WeightDisplay";
+import { useWeightData } from "@/contexts/WeightDataContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useScale } from "@/hooks/useScale";
 import { useStopwatch } from "@/hooks/useStopwatch";
-import { HandData, HandType, CycleData, WeightDataPoint } from "@/types/weight";
+import { WeightDataPoint, WeightDataWithMax } from "@/types/weight";
 
 const getPercentage = (value: number, base: number) => (value / base) * 100;
 
@@ -25,6 +25,18 @@ const INITIAL_CYCLE_HAND_DATA = [
   { weight: 5, timestamp: now + 3000 },
   { weight: 0, timestamp: now + 4000 },
 ];
+
+type HandType = "left" | "right";
+
+interface HandData {
+  left: WeightDataWithMax;
+  right: WeightDataWithMax;
+}
+
+interface CycleData {
+  left: WeightDataPoint[];
+  right: WeightDataPoint[];
+}
 
 const INITIAL_CYCLE_DATA: CycleData = {
   left: INITIAL_CYCLE_HAND_DATA,
@@ -49,7 +61,7 @@ export default function LiftScreen() {
   const [userWeight, setUserWeight] = useState("");
 
   const elapsedTime = useStopwatch(cycleStarted);
-  const { weightData, weightDataPoints, reset } = useScale();
+  const { weightData, weightDataPoints, reset } = useWeightData();
 
   const handleWeightChange = useCallback((weight: string) => {
     setUserWeight(weight);
@@ -122,7 +134,10 @@ export default function LiftScreen() {
         ...prev,
         [selectedHand]: {
           ...weightData,
-          maxWeight: Math.max(weightData.weight, prev[selectedHand].maxWeight),
+          maxWeight:
+            weightData.weight > 1
+              ? Math.max(weightData.weight, prev[selectedHand].maxWeight)
+              : prev[selectedHand].maxWeight,
         },
       }));
     }

@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { PermissionsAndroid, Platform } from "react-native";
 import { BleManager } from "react-native-ble-plx";
-
-const bleManager = new BleManager();
 
 const requestPermissions = async () => {
   if (Platform.OS === "ios") {
@@ -53,6 +51,7 @@ const requestPermissions = async () => {
 
 export const useBLE = () => {
   const [bleInitialized, setBleInitialized] = useState(false);
+  const bleManagerRef = useRef<BleManager>(new BleManager());
 
   useEffect(() => {
     const initBLE = async () => {
@@ -60,6 +59,7 @@ export const useBLE = () => {
         const isPermissionGranted = await requestPermissions();
 
         if (isPermissionGranted) {
+          bleManagerRef.current = new BleManager();
           setBleInitialized(true);
         }
       } catch (error) {
@@ -70,5 +70,5 @@ export const useBLE = () => {
     initBLE();
   }, []);
 
-  return { bleInitialized, bleManager };
+  return { bleInitialized, bleManager: bleManagerRef.current };
 };

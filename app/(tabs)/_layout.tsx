@@ -7,7 +7,7 @@ import { Tabs } from "expo-router";
 import { HapticTab } from "@/components/common/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
+import { colors } from "@/constants/theme-colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function TabLayout() {
@@ -17,7 +17,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         animation: "shift",
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
@@ -53,8 +53,6 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          // Hide the tab for now
-          href: null,
           title: "Settings",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="gearshape.fill" color={color} />

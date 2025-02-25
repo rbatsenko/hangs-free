@@ -5,14 +5,12 @@ import { BleError, Device, ScanMode } from "react-native-ble-plx";
 
 import { Buffer } from "buffer";
 
+import { DeviceType } from "@/contexts/SelectedDeviceContext";
+import { WeightData, WeightDataPoint } from "@/types/weight";
+
 import { useBLE } from "./useBLE";
 
 const isAndroid = Platform.OS === "android";
-
-interface WeightData {
-  weight: number;
-  unit: "kg" | "lb";
-}
 
 // Constants
 const DEVICE_NAME_PATTERN = "IF_B7"; // WH-C06 Bluetooth Scale
@@ -46,24 +44,17 @@ const getWeightData = (manufacturerData: string): WeightData | undefined => {
   }
 };
 
-export interface WeightDataWithMax extends WeightData {
-  maxWeight: number;
-}
-
-export interface WeightDataPoint {
-  weight: number;
-  timestamp: number;
-}
-
-const initialWeightData: WeightDataWithMax = {
+const initialWeightData: WeightData = {
   weight: 0,
-  maxWeight: 0,
   unit: "kg",
 };
 
-export const useScale = () => {
-  const [weightData, setWeightData] =
-    useState<WeightDataWithMax>(initialWeightData);
+export const useScale = ({
+  selectedDevice,
+}: {
+  selectedDevice: DeviceType;
+}) => {
+  const [weightData, setWeightData] = useState<WeightData>(initialWeightData);
   const [weightDataPoints, setWeightDataPoints] = useState<WeightDataPoint[]>(
     []
   );
@@ -88,11 +79,10 @@ export const useScale = () => {
     const data = getWeightData(manufacturerData);
     if (!data) return;
 
-    setWeightData((prevState) => ({
+    setWeightData({
       unit: data.unit,
       weight: data.weight,
-      maxWeight: Math.max(data.weight, prevState.maxWeight),
-    }));
+    });
 
     setWeightDataPoints((prev) => {
       const newPoints = [
@@ -107,13 +97,16 @@ export const useScale = () => {
     if (!bleInitialized) return;
 
     const scanOptions = isAndroid ? { scanMode: ScanMode.LowLatency } : null;
-    bleManager.startDeviceScan(null, scanOptions, scan);
+    if (selectedDevice === "whc06") {
+      bleManager.startDeviceScan(null, scanOptions, scan);
+    } else {
+      bleManager.stopDeviceScan();
+    }
 
     return () => {
       bleManager.stopDeviceScan();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bleInitialized, scan]);
+  }, [bleInitialized, bleManager, scan, selectedDevice]);
 
   return { weightData, weightDataPoints, reset };
 };
