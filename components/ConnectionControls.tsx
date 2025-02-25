@@ -4,7 +4,7 @@ import { StyleSheet, Pressable, ActivityIndicator } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { colors } from "@/constants/theme-colors";
+import { colors } from "@/constants/colors";
 import { useWeightData } from "@/contexts/WeightDataContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 

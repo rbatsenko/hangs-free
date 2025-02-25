@@ -1,6 +1,6 @@
 import { StyleSheet, Pressable, View, useColorScheme } from "react-native";
 
-import { colors } from "@/constants/theme-colors";
+import { colors } from "@/constants/colors";
 
 import { ThemedText } from "./ThemedText";
 

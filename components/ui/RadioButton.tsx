@@ -3,7 +3,7 @@ import React, { memo, useRef, useEffect } from "react";
 import { Animated, StyleSheet } from "react-native";
 
 import { ThemedView } from "@/components/ui/ThemedView";
-import { colors } from "@/constants/theme-colors";
+import { colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 export const RadioButton = memo(({ selected }: { selected: boolean }) => {
