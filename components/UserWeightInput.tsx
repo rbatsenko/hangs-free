@@ -2,8 +2,7 @@ import { StyleSheet, TextInput } from "react-native";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-import { ThemedText } from "./ui/ThemedText";
-import { ThemedView } from "./ui/ThemedView";
+import { ThemedText, ThemedView } from "./ui";
 
 type UserWeightInputProps = {
   value: string;

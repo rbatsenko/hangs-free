@@ -2,7 +2,7 @@ import React, { memo, useRef, useEffect } from "react";
 
 import { Animated, StyleSheet } from "react-native";
 
-import { ThemedView } from "@/components/ui/ThemedView";
+import { ThemedView } from "@/components/ui";
 import { colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 

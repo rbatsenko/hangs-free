@@ -1,4 +1,4 @@
-import { ThemedText } from "@/components/ui/ThemedText";
+import { ThemedText } from "@/components/ui";
 import { WeightDataPoint } from "@/types/weight";
 
 const formatElapsedTime = (ms: number) => {

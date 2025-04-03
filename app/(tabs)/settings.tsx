@@ -2,12 +2,9 @@ import React, { useCallback } from "react";
 
 import { StyleSheet } from "react-native";
 
+import { ConnectionControls, DeviceSelector } from "@/components";
 import ParallaxScrollView from "@/components/common/ParallaxScrollView";
-import { ConnectionControls } from "@/components/ConnectionControls";
-import { DeviceSelector } from "@/components/DeviceSelector";
-import { SettingsSection } from "@/components/ui/SettingsSection";
-import { ThemedText } from "@/components/ui/ThemedText";
-import { ThemedView } from "@/components/ui/ThemedView";
+import { SettingsSection, ThemedText, ThemedView } from "@/components/ui";
 import {
   useSelectedDevice,
   DeviceType,

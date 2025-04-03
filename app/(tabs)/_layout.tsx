@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 
 import { Tabs } from "expo-router";
 
-import { HapticTab } from "@/components/common/HapticTab";
+import { HapticTab } from "@/components/common";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { colors } from "@/constants/colors";

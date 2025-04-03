@@ -3,16 +3,21 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, Pressable, Text, Platform } from "react-native";
 import { LineGraph } from "react-native-graph";
 
-import ParallaxScrollView from "@/components/common/ParallaxScrollView";
-import { CycleWeightDisplay } from "@/components/CycleWeightDisplay";
-import { SegmentedControl } from "@/components/ui/SegmentedControl";
-import { ThemedText } from "@/components/ui/ThemedText";
-import { ThemedView } from "@/components/ui/ThemedView";
-import { UserWeightInput } from "@/components/UserWeightInput";
-import { WeightDisplay } from "@/components/WeightDisplay";
+import {
+  CycleWeightDisplay,
+  UserWeightInput,
+  WeightDisplay,
+} from "@/components";
+import { ParallaxScrollView } from "@/components/common";
+import {
+  CopyButton,
+  SegmentedControl,
+  ThemedText,
+  ThemedView,
+} from "@/components/ui";
 import { useWeightData } from "@/contexts/WeightDataContext";
+import { useStopwatch } from "@/hooks";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useStopwatch } from "@/hooks/useStopwatch";
 import { WeightDataPoint, WeightDataWithMax } from "@/types/weight";
 
 const getPercentage = (value: number, base: number) => (value / base) * 100;
@@ -165,10 +170,28 @@ export default function LiftScreen() {
 
   const isIpad = Platform.OS === "ios" && Platform.isPad;
 
+  const summaryText = useMemo(
+    () =>
+      `Left: ${handData.left.maxWeight}${handData.left.unit} ${percentages.left}\nRight: ${handData.right.maxWeight}${handData.right.unit} ${percentages.right}`,
+    [
+      handData.left.maxWeight,
+      handData.left.unit,
+      handData.right.maxWeight,
+      handData.right.unit,
+      percentages.left,
+      percentages.right,
+    ]
+  );
+
   const summaryView = useMemo(
     () => (
       <ThemedView style={styles.summaryContainer}>
-        <ThemedText style={styles.summaryTitle}>Summary max</ThemedText>
+        <ThemedView style={styles.summaryTitleContainer}>
+          <ThemedText style={{ ...styles.summaryTitle, marginTop: 2 }}>
+            Summary max
+          </ThemedText>
+          <CopyButton textToCopy={summaryText} />
+        </ThemedView>
         <ThemedView style={styles.summaryRow}>
           <ThemedView style={{ alignItems: "center" }}>
             <ThemedText style={styles.summaryText}>
@@ -212,6 +235,7 @@ export default function LiftScreen() {
       handleResetAll,
       percentages.left,
       percentages.right,
+      summaryText,
     ]
   );
 
@@ -348,11 +372,16 @@ const styles = StyleSheet.create({
     padding: 8,
     alignItems: "center",
   },
+  summaryTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+    marginBottom: 8,
+  },
   summaryTitle: {
     fontSize: 20,
     lineHeight: 20,
     fontWeight: "bold",
-    marginBottom: 16,
   },
   summaryRow: {
     flexDirection: "row",
