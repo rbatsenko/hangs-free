@@ -2,6 +2,8 @@
 
 A React Native app for tracking hangboard training with Bluetooth scale integration.
 
+🌐 **Website**: [hangsfree.com](https://hangsfree.com)
+
 ## Features
 
 - Real-time weight measurement from connected scales (WH-C06, Tindeq Progressor)
