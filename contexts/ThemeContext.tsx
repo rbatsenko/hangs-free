@@ -30,7 +30,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Save theme mode to storage whenever it changes
   useEffect(() => {
-    saveThemeMode(themeMode);
+    if (isMounted.current) {
+      saveThemeMode(themeMode);
+    } else {
+      isMounted.current = true;
+    }
   }, [themeMode]);
 
   const loadThemeMode = () => {
