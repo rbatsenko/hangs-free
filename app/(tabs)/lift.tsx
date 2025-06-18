@@ -248,6 +248,7 @@ export default function LiftScreen() {
           selectedIndex={selectedHand === "left" ? 0 : 1}
           onChange={handleHandChange}
           style={styles.segment}
+          variant="connected"
         />
       </ThemedView>
 

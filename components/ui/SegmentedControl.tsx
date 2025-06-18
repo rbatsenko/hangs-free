@@ -10,6 +10,7 @@ interface SegmentedControlProps {
   selectedIndex: number;
   onChange: (index: number) => void;
   style?: any;
+  variant?: 'default' | 'connected';
 }
 
 export function SegmentedControl({
@@ -17,6 +18,7 @@ export function SegmentedControl({
   selectedIndex,
   onChange,
   style,
+  variant = 'default',
 }: SegmentedControlProps) {
   const colorScheme = useColorScheme();
   const theme = colorScheme ?? "light";
@@ -24,7 +26,7 @@ export function SegmentedControl({
   return (
     <View
       style={[
-        styles.container,
+        variant === 'connected' ? styles.connectedContainer : styles.container,
         style,
         {
           backgroundColor: colors[theme].segmentedControlBackground,
@@ -61,6 +63,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     borderRadius: 8,
+    padding: 0,
+  },
+  connectedContainer: {
+    flexDirection: "row",
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
     padding: 0,
   },
   segment: {
