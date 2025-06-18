@@ -1,4 +1,4 @@
-# HangsFree
+# Hangs Free
 
 A React Native app for tracking hangboard training with Bluetooth scale integration.
 
