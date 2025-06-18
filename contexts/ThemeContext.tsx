@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 import { useColorScheme as useSystemColorScheme } from 'react-native';
 import { MMKV } from 'react-native-mmkv';
@@ -22,6 +22,7 @@ const storage = new MMKV();
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useSystemColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
+  const isMounted = useRef(false);
 
   // Load saved theme preference on app start
   useEffect(() => {
