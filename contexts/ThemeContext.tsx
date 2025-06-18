@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 import { useColorScheme as useSystemColorScheme } from 'react-native';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MMKV } from 'react-native-mmkv';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type ColorScheme = 'light' | 'dark';
@@ -15,7 +14,10 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = '@theme_mode';
+const THEME_STORAGE_KEY = 'theme_mode';
+
+// Create MMKV storage instance
+const storage = new MMKV();
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useSystemColorScheme();
@@ -31,9 +33,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     saveThemeMode(themeMode);
   }, [themeMode]);
 
-  const loadThemeMode = async () => {
+  const loadThemeMode = () => {
     try {
-      const savedMode = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+      const savedMode = storage.getString(THEME_STORAGE_KEY);
       if (savedMode && ['system', 'light', 'dark'].includes(savedMode)) {
         setThemeModeState(savedMode as ThemeMode);
       }
@@ -42,9 +44,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const saveThemeMode = async (mode: ThemeMode) => {
+  const saveThemeMode = (mode: ThemeMode) => {
     try {
-      await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
+      storage.set(THEME_STORAGE_KEY, mode);
     } catch (error) {
       console.error('Error saving theme mode:', error);
     }

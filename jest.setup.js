@@ -18,12 +18,18 @@ jest.mock("react-native-ble-plx", () => {
   };
 });
 
-// Mock AsyncStorage
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  setItem: jest.fn(() => Promise.resolve()),
-  getItem: jest.fn(() => Promise.resolve(null)),
-  removeItem: jest.fn(() => Promise.resolve()),
-  clear: jest.fn(() => Promise.resolve()),
+// Mock MMKV
+jest.mock("react-native-mmkv", () => ({
+  MMKV: jest.fn().mockImplementation(() => ({
+    set: jest.fn(),
+    getString: jest.fn(() => undefined),
+    getNumber: jest.fn(() => undefined),
+    getBoolean: jest.fn(() => undefined),
+    delete: jest.fn(),
+    clearAll: jest.fn(),
+    getAllKeys: jest.fn(() => []),
+    contains: jest.fn(() => false),
+  })),
 }));
 
 // Mock ThemeContext
