@@ -1,6 +1,7 @@
-import { StyleSheet, Pressable, View, useColorScheme } from "react-native";
+import { StyleSheet, Pressable, View } from "react-native";
 
 import { colors } from "@/constants/colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 import { ThemedText } from "./ThemedText";
 
@@ -59,8 +60,7 @@ export function SegmentedControl({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    borderRadius: 8,
     padding: 0,
   },
   segment: {

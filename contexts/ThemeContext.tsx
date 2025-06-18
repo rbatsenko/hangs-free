@@ -49,6 +49,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         // Appearance.setColorScheme might not be available on all platforms
         console.log('Could not sync system appearance:', error);
       }
+    } else {
+      // When switching back to 'system', reset appearance to follow system setting
+      try {
+        Appearance.setColorScheme(null); // null means follow system setting
+      } catch (error) {
+        console.log('Could not reset system appearance:', error);
+      }
     }
   }, [themeMode]);
 
