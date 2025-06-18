@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
-import { useColorScheme as useSystemColorScheme } from 'react-native';
+import { useColorScheme as useSystemColorScheme, Appearance } from 'react-native';
 import { MMKV } from 'react-native-mmkv';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
@@ -35,6 +35,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       saveThemeMode(themeMode);
     } else {
       isMounted.current = true;
+    }
+  }, [themeMode]);
+
+  // Sync system appearance when manually changing themes (for better consistency)
+  useEffect(() => {
+    if (themeMode !== 'system') {
+      // When manually setting light/dark mode, update system appearance to match
+      // This helps with status bar, keyboard, and other system UI elements
+      try {
+        Appearance.setColorScheme(themeMode === 'dark' ? 'dark' : 'light');
+      } catch (error) {
+        // Appearance.setColorScheme might not be available on all platforms
+        console.log('Could not sync system appearance:', error);
+      }
     }
   }, [themeMode]);
 
