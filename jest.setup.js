@@ -18,4 +18,22 @@ jest.mock("react-native-ble-plx", () => {
   };
 });
 
+// Mock AsyncStorage
+jest.mock("@react-native-async-storage/async-storage", () => ({
+  setItem: jest.fn(() => Promise.resolve()),
+  getItem: jest.fn(() => Promise.resolve(null)),
+  removeItem: jest.fn(() => Promise.resolve()),
+  clear: jest.fn(() => Promise.resolve()),
+}));
+
+// Mock ThemeContext
+jest.mock("@/contexts/ThemeContext", () => ({
+  useTheme: jest.fn(() => ({
+    themeMode: 'system',
+    colorScheme: 'light',
+    setThemeMode: jest.fn(),
+  })),
+  ThemeProvider: ({ children }) => children,
+}));
+
 // Add any other global mocks your tests need

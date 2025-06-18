@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   DarkTheme,
   DefaultTheme,
-  ThemeProvider,
+  ThemeProvider as NavigationThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -14,14 +14,34 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 
 import { SelectedDeviceProvider } from "@/contexts/SelectedDeviceContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { WeightDataProvider } from "@/contexts/WeightDataContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function ThemedApp() {
   const colorScheme = useColorScheme();
+
+  return (
+    <SelectedDeviceProvider>
+      <WeightDataProvider>
+        <NavigationThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </NavigationThemeProvider>
+      </WeightDataProvider>
+    </SelectedDeviceProvider>
+  );
+}
+
+export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -38,19 +58,9 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView>
-      <SelectedDeviceProvider>
-        <WeightDataProvider>
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </WeightDataProvider>
-      </SelectedDeviceProvider>
+      <ThemeProvider>
+        <ThemedApp />
+      </ThemeProvider>
     </GestureHandlerRootView>
   );
 }
