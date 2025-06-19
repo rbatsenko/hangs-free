@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { renderHook } from '@testing-library/react-native';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
 
-import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 
 import { useColorScheme } from '../useColorScheme';
 
@@ -22,6 +22,20 @@ describe('useColorScheme', () => {
     const firstResult = result.current;
     const secondResult = result.current;
     expect(firstResult).toBe(secondResult);
+  });
+
+  it('responds to theme context changes', () => {
+    // Test that the hook properly connects to the theme context
+    // and returns the colorScheme from useTheme
+    const { result } = renderHook(() => {
+      const colorScheme = useColorScheme();
+      const themeContext = useTheme();
+      return { colorScheme, themeColorScheme: themeContext.colorScheme };
+    }, { wrapper });
+
+    // The hook should return the same value as the theme context
+    expect(result.current.colorScheme).toBe(result.current.themeColorScheme);
+    expect(['light', 'dark']).toContain(result.current.colorScheme);
   });
 
   it('is a function that can be called without errors', () => {

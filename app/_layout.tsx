@@ -25,6 +25,12 @@ function ThemedApp() {
   return (
     <SelectedDeviceProvider>
       <WeightDataProvider>
+        {/* 
+          In Expo Router, we use ThemeProvider with 'value' prop instead of 
+          NavigationContainer with 'theme' prop. This is the recommended approach
+          as Expo Router manages the NavigationContainer internally.
+          See: https://docs.expo.dev/router/migrate/from-react-navigation/#themes
+        */}
         <NavigationThemeProvider
           value={colorScheme === "dark" ? DarkNavigationTheme : LightNavigationTheme}
         >

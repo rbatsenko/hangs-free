@@ -19,6 +19,15 @@ const THEME_STORAGE_KEY = 'theme_mode';
 // Create MMKV storage instance
 const storage = new MMKV();
 
+/**
+ * ThemeProvider component that manages application theming
+ * 
+ * Features:
+ * - Supports 'system', 'light', and 'dark' theme modes
+ * - Persists theme preference using MMKV storage
+ * - Syncs with system appearance API for better integration on iOS/Android
+ * - Handles theme changes and system appearance synchronization
+ */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useSystemColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
@@ -47,14 +56,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         Appearance.setColorScheme(themeMode === 'dark' ? 'dark' : 'light');
       } catch (error) {
         // Appearance.setColorScheme might not be available on all platforms
-        console.log('Could not sync system appearance:', error);
+        console.warn('Could not sync system appearance:', error);
       }
     } else {
       // When switching back to 'system', reset appearance to follow system setting
+      // On native platforms (iOS/Android), null is officially supported and means follow system setting
       try {
-        Appearance.setColorScheme(null); // null means follow system setting
+        Appearance.setColorScheme(null);
       } catch (error) {
-        console.log('Could not reset system appearance:', error);
+        console.warn('Could not reset system appearance:', error);
       }
     }
   }, [themeMode]);
