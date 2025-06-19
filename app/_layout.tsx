@@ -40,22 +40,25 @@ function ThemedApp() {
 }
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded || error) {
+      // Hide splash screen when fonts are loaded OR if there's an error
+      // This prevents the splash screen from staying forever if font loading fails
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, error]);
 
-  if (!loaded) {
+  // Don't render anything until fonts are loaded (or failed to load)
+  if (!loaded && !error) {
     return null;
   }
 
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider>
         <ThemedApp />
       </ThemeProvider>
