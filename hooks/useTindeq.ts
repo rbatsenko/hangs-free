@@ -121,6 +121,7 @@ export const useTindeq = () => {
         return;
       }
 
+      if (scannedDevice?.name?.startsWith("Progressor")) {
         bleManager.stopDeviceScan();
         connect(scannedDevice.id);
       }
