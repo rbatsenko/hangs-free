@@ -47,3 +47,17 @@ npm test
 npm run ts-check
 npm run lint
 ```
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on how to get started, code standards, and the development workflow.
+
+### Quick Start for Contributors
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Make your changes following our [code standards](CONTRIBUTING.md#code-standards)
+4. Run tests: `npm test -- --watchAll=false`
+5. Submit a pull request
+
+For more details, see [CONTRIBUTING.md](CONTRIBUTING.md).
