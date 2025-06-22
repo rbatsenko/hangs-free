@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 
 import { ConnectionControls, DeviceSelector } from "@/components";
 import ParallaxScrollView from "@/components/common/ParallaxScrollView";
-import { SettingsSection, ThemedText, ThemedView, ThemeSelector } from "@/components/ui";
+import { SettingsSection, ThemedText, ThemedView, ThemeSelector, WeightUnitsSelector } from "@/components/ui";
 import {
   useSelectedDevice,
   DeviceType,
@@ -28,6 +28,10 @@ export default function SettingsScreen() {
 
       <SettingsSection title="Appearance">
         <ThemeSelector />
+      </SettingsSection>
+
+      <SettingsSection title="Units">
+        <WeightUnitsSelector />
       </SettingsSection>
 
       <SettingsSection title="Device">

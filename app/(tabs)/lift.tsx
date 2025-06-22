@@ -16,6 +16,7 @@ import {
   ThemedView,
 } from "@/components/ui";
 import { useWeightData } from "@/contexts/WeightDataContext";
+import { useWeightUnits } from "@/contexts/WeightUnitsContext";
 import { useStopwatch } from "@/hooks";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { WeightDataPoint, WeightDataWithMax } from "@/types/weight";
@@ -48,14 +49,16 @@ const INITIAL_CYCLE_DATA: CycleData = {
   right: INITIAL_CYCLE_HAND_DATA,
 };
 
-const INITIAL_HAND_DATA: HandData = {
-  left: { weight: 0, maxWeight: 0, unit: "kg" },
-  right: { weight: 0, maxWeight: 0, unit: "kg" },
-};
-
 export default function LiftScreen() {
   const colorScheme = useColorScheme() ?? "light";
   const isLight = colorScheme === "light";
+  const { weightUnit } = useWeightUnits();
+  
+  const INITIAL_HAND_DATA: HandData = {
+    left: { weight: 0, maxWeight: 0, unit: weightUnit },
+    right: { weight: 0, maxWeight: 0, unit: weightUnit },
+  };
+
   const [selectedHand, setSelectedHand] = useState<HandType>("left");
   const [handData, setHandData] = useState<HandData>(INITIAL_HAND_DATA);
   const [cycleStarted, setCycleStarted] = useState(false);
@@ -85,9 +88,10 @@ export default function LiftScreen() {
   );
 
   const handleResetHand = useCallback(() => {
+    const initialHandData = { weight: 0, maxWeight: 0, unit: weightUnit };
     setHandData((prev) => ({
       ...prev,
-      [selectedHand]: INITIAL_HAND_DATA[selectedHand],
+      [selectedHand]: initialHandData,
     }));
     setCycleStarted(false);
     setCycleData((prev) => ({
@@ -96,14 +100,26 @@ export default function LiftScreen() {
     }));
     setCurrentPoint(INITIAL_CYCLE_HAND_DATA[0]);
     reset();
-  }, [selectedHand, reset]);
+  }, [selectedHand, reset, weightUnit]);
 
   const handleResetAll = useCallback(() => {
-    setHandData(INITIAL_HAND_DATA);
+    const initialData = {
+      left: { weight: 0, maxWeight: 0, unit: weightUnit },
+      right: { weight: 0, maxWeight: 0, unit: weightUnit },
+    };
+    setHandData(initialData);
     setCycleStarted(false);
     setCycleData(INITIAL_CYCLE_DATA);
     reset();
-  }, [reset]);
+  }, [reset, weightUnit]);
+
+  // Update hand data units when weight unit changes
+  useEffect(() => {
+    setHandData((prev) => ({
+      left: { ...prev.left, unit: weightUnit },
+      right: { ...prev.right, unit: weightUnit },
+    }));
+  }, [weightUnit]);
 
   useEffect(() => {
     if (weightData && weightDataPoints.length > 0) {

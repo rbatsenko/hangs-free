@@ -15,6 +15,7 @@ import { LightNavigationTheme, DarkNavigationTheme } from "@/constants/navigatio
 import { SelectedDeviceProvider } from "@/contexts/SelectedDeviceContext";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import { WeightDataProvider } from "@/contexts/WeightDataContext";
+import { WeightUnitsProvider } from "@/contexts/WeightUnitsContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -24,23 +25,25 @@ function ThemedApp() {
 
   return (
     <SelectedDeviceProvider>
-      <WeightDataProvider>
-        {/* 
-          In Expo Router, we use ThemeProvider with 'value' prop instead of 
-          NavigationContainer with 'theme' prop. This is the recommended approach
-          as Expo Router manages the NavigationContainer internally.
-          See: https://docs.expo.dev/router/migrate/from-react-navigation/#themes
-        */}
-        <NavigationThemeProvider
-          value={colorScheme === "dark" ? DarkNavigationTheme : LightNavigationTheme}
-        >
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        </NavigationThemeProvider>
-      </WeightDataProvider>
+      <WeightUnitsProvider>
+        <WeightDataProvider>
+          {/* 
+            In Expo Router, we use ThemeProvider with 'value' prop instead of 
+            NavigationContainer with 'theme' prop. This is the recommended approach
+            as Expo Router manages the NavigationContainer internally.
+            See: https://docs.expo.dev/router/migrate/from-react-navigation/#themes
+          */}
+          <NavigationThemeProvider
+            value={colorScheme === "dark" ? DarkNavigationTheme : LightNavigationTheme}
+          >
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+          </NavigationThemeProvider>
+        </WeightDataProvider>
+      </WeightUnitsProvider>
     </SelectedDeviceProvider>
   );
 }

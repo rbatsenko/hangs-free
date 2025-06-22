@@ -6,6 +6,7 @@ import { BleError, Device, ScanMode } from "react-native-ble-plx";
 import { Buffer } from "buffer";
 
 import { DeviceType } from "@/contexts/SelectedDeviceContext";
+import { useWeightUnits } from "@/contexts/WeightUnitsContext";
 import { WeightData, WeightDataPoint } from "@/types/weight";
 
 import { useBLE } from "./useBLE";
@@ -17,7 +18,7 @@ const DEVICE_NAME_PATTERN = "IF_B7"; // WH-C06 Bluetooth Scale
 const MAX_DATA_POINTS = 1000; // Prevent memory leaks by limiting data points
 const WEIGHT_DATA_BYTE_OFFSET = 12;
 
-const getWeightData = (manufacturerData: string): WeightData | undefined => {
+const getWeightData = (manufacturerData: string, targetUnit: string, convertWeight: (weight: number, fromUnit: string, toUnit: string) => number): WeightData | undefined => {
   try {
     const data = Array.from(Buffer.from(manufacturerData, "base64"));
 
@@ -27,26 +28,25 @@ const getWeightData = (manufacturerData: string): WeightData | undefined => {
     }
 
     // Convert two bytes to a 16-bit integer (big-endian)
-    const weight =
+    // The scale returns weight in kg
+    const weightInKg =
       (data[WEIGHT_DATA_BYTE_OFFSET] * 256 +
         data[WEIGHT_DATA_BYTE_OFFSET + 1]) /
       100;
 
     // Validate weight is a reasonable number
-    if (isNaN(weight) || weight < 0 || weight > 1000) {
+    if (isNaN(weightInKg) || weightInKg < 0 || weightInKg > 1000) {
       throw new Error("Invalid weight value");
     }
 
-    return { weight, unit: "kg" };
+    // Convert to target unit
+    const weight = convertWeight(weightInKg, "kg", targetUnit);
+
+    return { weight, unit: targetUnit };
   } catch (e) {
     console.error("Error parsing weight data:", e);
     return undefined;
   }
-};
-
-const initialWeightData: WeightData = {
-  weight: 0,
-  unit: "kg",
 };
 
 export const useScale = ({
@@ -54,6 +54,12 @@ export const useScale = ({
 }: {
   selectedDevice: DeviceType;
 }) => {
+  const { weightUnit, convertWeight } = useWeightUnits();
+  const initialWeightData: WeightData = {
+    weight: 0,
+    unit: weightUnit,
+  };
+  
   const [weightData, setWeightData] = useState<WeightData>(initialWeightData);
   const [weightDataPoints, setWeightDataPoints] = useState<WeightDataPoint[]>(
     []
@@ -61,9 +67,9 @@ export const useScale = ({
   const { bleManager, bleInitialized } = useBLE();
 
   const reset = useCallback(() => {
-    setWeightData(initialWeightData);
+    setWeightData({ weight: 0, unit: weightUnit });
     setWeightDataPoints([]);
-  }, []);
+  }, [weightUnit]);
 
   const scan = useCallback((error: BleError | null, device: Device | null) => {
     if (error) {
@@ -76,7 +82,7 @@ export const useScale = ({
       return;
     }
 
-    const data = getWeightData(manufacturerData);
+    const data = getWeightData(manufacturerData, weightUnit, convertWeight);
     if (!data) return;
 
     setWeightData({
@@ -91,7 +97,7 @@ export const useScale = ({
       ].slice(-MAX_DATA_POINTS); // Keep only the last MAX_DATA_POINTS
       return newPoints;
     });
-  }, []);
+  }, [weightUnit, convertWeight]);
 
   useEffect(() => {
     if (!bleInitialized) return;

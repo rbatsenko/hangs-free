@@ -9,6 +9,13 @@ jest.mock("../useBLE", () => ({
   useBLE: jest.fn(),
 }));
 
+jest.mock("@/contexts/WeightUnitsContext", () => ({
+  useWeightUnits: jest.fn(() => ({
+    weightUnit: "kg",
+    convertWeight: (weight: number, fromUnit: string, toUnit: string) => weight,
+  })),
+}));
+
 const renderUseScale = () => {
   return renderHook(() => useScale({ selectedDevice: "whc06" }));
 };
