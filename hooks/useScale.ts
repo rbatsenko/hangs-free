@@ -6,7 +6,7 @@ import { BleError, Device, ScanMode } from "react-native-ble-plx";
 import { Buffer } from "buffer";
 
 import { DeviceType } from "@/contexts/SelectedDeviceContext";
-import { useWeightUnits } from "@/contexts/WeightUnitsContext";
+import { useWeightUnits, WeightUnit } from "@/contexts/WeightUnitsContext";
 import { WeightData, WeightDataPoint } from "@/types/weight";
 
 import { useBLE } from "./useBLE";
@@ -18,7 +18,7 @@ const DEVICE_NAME_PATTERN = "IF_B7"; // WH-C06 Bluetooth Scale
 const MAX_DATA_POINTS = 1000; // Prevent memory leaks by limiting data points
 const WEIGHT_DATA_BYTE_OFFSET = 12;
 
-const getWeightData = (manufacturerData: string, targetUnit: string, convertWeight: (weight: number, fromUnit: string, toUnit: string) => number): WeightData | undefined => {
+const getWeightData = (manufacturerData: string, targetUnit: WeightUnit, convertWeight: (weight: number, fromUnit: WeightUnit, toUnit: WeightUnit) => number): WeightData | undefined => {
   try {
     const data = Array.from(Buffer.from(manufacturerData, "base64"));
 
@@ -40,7 +40,7 @@ const getWeightData = (manufacturerData: string, targetUnit: string, convertWeig
     }
 
     // Convert to target unit
-    const weight = convertWeight(weightInKg, "kg", targetUnit);
+    const weight = convertWeight(weightInKg, "kg" as WeightUnit, targetUnit);
 
     return { weight, unit: targetUnit };
   } catch (e) {
@@ -69,6 +69,11 @@ export const useScale = ({
   const reset = useCallback(() => {
     setWeightData({ weight: 0, unit: weightUnit });
     setWeightDataPoints([]);
+  }, [weightUnit]);
+
+  // Update weightData unit when weightUnit changes
+  useEffect(() => {
+    setWeightData(prev => ({ ...prev, unit: weightUnit }));
   }, [weightUnit]);
 
   const scan = useCallback((error: BleError | null, device: Device | null) => {

@@ -16,12 +16,25 @@ import {
   ThemedView,
 } from "@/components/ui";
 import { useWeightData } from "@/contexts/WeightDataContext";
-import { useWeightUnits } from "@/contexts/WeightUnitsContext";
+import { useWeightUnits, WeightUnit } from "@/contexts/WeightUnitsContext";
 import { useStopwatch } from "@/hooks";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { WeightDataPoint, WeightDataWithMax } from "@/types/weight";
 
 const getPercentage = (value: number, base: number) => (value / base) * 100;
+
+// Helper function to create initial hand data with specified unit
+const createInitialHandData = (unit: WeightUnit) => ({
+  weight: 0,
+  maxWeight: 0,
+  unit,
+});
+
+// Helper function to create complete initial hand data for both hands
+const createInitialHandsData = (unit: WeightUnit): HandData => ({
+  left: createInitialHandData(unit),
+  right: createInitialHandData(unit),
+});
 
 const now = Date.now();
 const INITIAL_CYCLE_HAND_DATA = [
@@ -54,10 +67,7 @@ export default function LiftScreen() {
   const isLight = colorScheme === "light";
   const { weightUnit } = useWeightUnits();
   
-  const INITIAL_HAND_DATA: HandData = {
-    left: { weight: 0, maxWeight: 0, unit: weightUnit },
-    right: { weight: 0, maxWeight: 0, unit: weightUnit },
-  };
+  const INITIAL_HAND_DATA: HandData = createInitialHandsData(weightUnit);
 
   const [selectedHand, setSelectedHand] = useState<HandType>("left");
   const [handData, setHandData] = useState<HandData>(INITIAL_HAND_DATA);
@@ -88,7 +98,7 @@ export default function LiftScreen() {
   );
 
   const handleResetHand = useCallback(() => {
-    const initialHandData = { weight: 0, maxWeight: 0, unit: weightUnit };
+    const initialHandData = createInitialHandData(weightUnit);
     setHandData((prev) => ({
       ...prev,
       [selectedHand]: initialHandData,
@@ -103,10 +113,7 @@ export default function LiftScreen() {
   }, [selectedHand, reset, weightUnit]);
 
   const handleResetAll = useCallback(() => {
-    const initialData = {
-      left: { weight: 0, maxWeight: 0, unit: weightUnit },
-      right: { weight: 0, maxWeight: 0, unit: weightUnit },
-    };
+    const initialData = createInitialHandsData(weightUnit);
     setHandData(initialData);
     setCycleStarted(false);
     setCycleData(INITIAL_CYCLE_DATA);
