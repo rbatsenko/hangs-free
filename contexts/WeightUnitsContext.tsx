@@ -89,8 +89,8 @@ export function WeightUnitsProvider({ children }: { children: React.ReactNode })
   };
 
   const formatWeight = (weight: number): string => {
-    // Round to 1 decimal place for display
-    return weight.toFixed(1);
+    // Round to 2 decimal places for display (as was originally)
+    return weight.toFixed(2);
   };
 
   const value = {

@@ -35,36 +35,11 @@ const getWeightData = (manufacturerData: string, targetUnit: WeightUnit, convert
       throw new Error("Invalid weight value");
     }
 
-    // Smart detection of device unit:
-    // The WH-C06 scale can be configured to display in kg or lb.
-    // When configured for lb, it appears to send the weight data in lb units directly,
-    // rather than always in kg as initially assumed.
-    // 
-    // Heuristic approach:
-    // - If app is set to lb and the raw value is in a reasonable range for human weight in lb (50-500)
-    // - AND converting it as if it were kg would result in an unreasonably high value (>400 lb)
-    // - Then assume the device is already sending lb data
-    
-    let deviceUnit: WeightUnit = "kg"; // Default assumption
-    let weightInDeviceUnit = rawValue;
-    
-    if (targetUnit === "lb") {
-      // If raw value is reasonable for lb (50-300 for most people)
-      if (rawValue >= 50 && rawValue <= 300) {
-        // Calculate what it would be if we treated it as kg and converted
-        const ifTreatedAsKg = rawValue * 2.20462;
-        
-        // If treating as kg would result in >250 lb (heavy but reasonable as kg->lb conversion), 
-        // but raw value itself is reasonable as lb, assume device is sending lb data directly
-        if (ifTreatedAsKg > 250) {
-          deviceUnit = "lb";
-          weightInDeviceUnit = rawValue;
-        }
-      }
-    }
-
-    // Convert to target unit only if device unit differs from target
-    const weight = convertWeight(weightInDeviceUnit, deviceUnit, targetUnit);
+    // The WH-C06 scale protocol appears to always send weight data in kg
+    // regardless of the display unit setting on the device itself.
+    // Therefore, we should always treat the raw data as kg and convert if needed.
+    const weightInKg = rawValue;
+    const weight = convertWeight(weightInKg, "kg", targetUnit);
 
     return { weight, unit: targetUnit };
   } catch (e) {
