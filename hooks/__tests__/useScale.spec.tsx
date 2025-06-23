@@ -192,7 +192,7 @@ describe("useScale", () => {
     expect(result.current.weightDataPoints).toEqual([]);
   });
 
-  it("should detect when device is sending lb data and avoid double conversion", () => {
+  it("should correctly handle device unit setting and always convert from kg transmission data", () => {
     const mockUseWeightUnits = jest.mocked(
       jest.requireMock("@/contexts/WeightUnitsContext").useWeightUnits
     );
@@ -212,20 +212,20 @@ describe("useScale", () => {
     const { result: scaleResult } = renderUseScale();
 
     // Create mock manufacturer data following WH-C06 protocol
-    // Device is set to lb mode and shows 150 lb
-    // Weight: 150 lb at offset 10-11 (big-endian)
-    // 150 * 100 = 15000 = 0x3A98 = [58, 152] in decimal
+    // Device display is set to lb mode (unit code 2) and shows ~150 lb
+    // But weight data is ALWAYS transmitted in kg units (68.04 kg = 150 lb)
+    // Weight: 68.04 kg * 100 = 6804 = 0x1A8C = [26, 140] in decimal
     // Unit: lb (2) and stable flag (1) at offset 14 = 0x12 = 18
-    const weightInLb = 150;
-    const encodedWeight = weightInLb * 100; // 15000
-    const highByte = Math.floor(encodedWeight / 256); // 58
-    const lowByte = encodedWeight % 256; // 152
+    const weightInKg = 68.04; // This equals about 150 lb
+    const encodedWeight = Math.round(weightInKg * 100); // 6804
+    const highByte = Math.floor(encodedWeight / 256); // 26
+    const lowByte = encodedWeight % 256; // 140
     
     const weightBytes = Buffer.from([
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // bytes 0-9
-      highByte, lowByte,                // bytes 10-11: weight 150lb
+      highByte, lowByte,                // bytes 10-11: weight 68.04kg (transmitted in kg)
       0, 0,                             // bytes 12-13: padding  
-      0x12                              // byte 14: stable=1, unit=lb=2
+      0x12                              // byte 14: stable=1, unit=lb=2 (device display unit)
     ]);
     const manufacturerData = weightBytes.toString("base64");
 
@@ -237,9 +237,8 @@ describe("useScale", () => {
       });
     });
 
-    // Should correctly detect device is sending lb data (unit code 2)
-    // and convert properly to app's target unit (also lb in this case)
-    // So 150 lb from device -> 150 lb in app (no conversion needed)
+    // Should correctly convert from kg transmission data to lb app unit
+    // 68.04 kg transmitted -> converted to ~150 lb for app display
     expect(scaleResult.current.weightData.weight).toBeCloseTo(150, 0);
     expect(scaleResult.current.weightData.unit).toBe("lb");
   });

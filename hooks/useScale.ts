@@ -36,18 +36,19 @@ const getWeightData = (manufacturerData: string, targetUnit: WeightUnit, convert
     }
 
     // Extract weight: 2 bytes starting at offset 10, big-endian, in 0.01kg units
-    const rawWeight = ((bytes[WEIGHT_OFFSET] << 8) | bytes[WEIGHT_OFFSET + 1]) / 100;
+    // According to WH-C06 protocol, weight data is ALWAYS transmitted in kg units
+    const rawWeightInKg = ((bytes[WEIGHT_OFFSET] << 8) | bytes[WEIGHT_OFFSET + 1]) / 100;
 
     // Extract unit and stable flag from offset 14
     const unitByte = bytes[STABLE_OFFSET];
     const stableFlag = (unitByte & 0xf0) >> 4;
     const deviceUnitCode = unitByte & 0x0f;
     
-    // Get device unit from mapping
+    // Get device unit from mapping (this is what the device display shows, not the transmission unit)
     const deviceUnit = DEVICE_UNIT_MAP[deviceUnitCode];
     
     // Validate extracted values
-    if (isNaN(rawWeight) || rawWeight < 0 || rawWeight > 1000) {
+    if (isNaN(rawWeightInKg) || rawWeightInKg < 0 || rawWeightInKg > 1000) {
       throw new Error("Invalid weight value");
     }
     
@@ -55,8 +56,9 @@ const getWeightData = (manufacturerData: string, targetUnit: WeightUnit, convert
       throw new Error(`Unsupported device unit code: ${deviceUnitCode}`);
     }
 
-    // Convert weight from device unit to target unit if needed
-    const weight = convertWeight(rawWeight, deviceUnit, targetUnit);
+    // Convert weight from kg (transmission unit) to target unit
+    // The device always transmits in kg, regardless of its display unit setting
+    const weight = convertWeight(rawWeightInKg, 'kg', targetUnit);
 
     return { 
       weight, 
@@ -64,7 +66,7 @@ const getWeightData = (manufacturerData: string, targetUnit: WeightUnit, convert
       // Additional metadata that could be useful for debugging
       deviceUnit,
       stable: stableFlag > 0,
-      rawWeight 
+      rawWeight: rawWeightInKg 
     };
   } catch (e) {
     console.error("Error parsing weight data:", e);
