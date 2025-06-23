@@ -16,32 +16,56 @@ const isAndroid = Platform.OS === "android";
 // Constants
 const DEVICE_NAME_PATTERN = "IF_B7"; // WH-C06 Bluetooth Scale
 const MAX_DATA_POINTS = 1000; // Prevent memory leaks by limiting data points
-const WEIGHT_DATA_BYTE_OFFSET = 12;
+const WEIGHT_OFFSET = 10; // Weight value starts here (2 bytes)
+const STABLE_OFFSET = 14; // Unit and stable flag are here (1 byte)
+
+// Unit mapping for WH-C06 scale
+const DEVICE_UNIT_MAP: Record<number, WeightUnit> = {
+  1: 'kg',
+  2: 'lb',
+  // Note: 3='st' (stone) and 4='jin' are not supported in our app yet
+};
 
 const getWeightData = (manufacturerData: string, targetUnit: WeightUnit, convertWeight: (weight: number, fromUnit: WeightUnit, toUnit: WeightUnit) => number): WeightData | undefined => {
   try {
-    const data = Array.from(Buffer.from(manufacturerData, "base64"));
+    const bytes = Array.from(Buffer.from(manufacturerData, "base64"));
 
-    // Add validation for data length
-    if (data.length < WEIGHT_DATA_BYTE_OFFSET + 2) {
+    // Ensure manufacturer data is at least 15 bytes long
+    if (bytes.length < 15) {
       throw new Error("Invalid manufacturer data length");
     }
 
-    // Convert two bytes to a 16-bit integer (big-endian)
-    const rawValue = (data[WEIGHT_DATA_BYTE_OFFSET] * 256 + data[WEIGHT_DATA_BYTE_OFFSET + 1]) / 100;
+    // Extract weight: 2 bytes starting at offset 10, big-endian, in 0.01kg units
+    const rawWeight = ((bytes[WEIGHT_OFFSET] << 8) | bytes[WEIGHT_OFFSET + 1]) / 100;
 
-    // Validate raw value is reasonable
-    if (isNaN(rawValue) || rawValue < 0 || rawValue > 1000) {
+    // Extract unit and stable flag from offset 14
+    const unitByte = bytes[STABLE_OFFSET];
+    const stableFlag = (unitByte & 0xf0) >> 4;
+    const deviceUnitCode = unitByte & 0x0f;
+    
+    // Get device unit from mapping
+    const deviceUnit = DEVICE_UNIT_MAP[deviceUnitCode];
+    
+    // Validate extracted values
+    if (isNaN(rawWeight) || rawWeight < 0 || rawWeight > 1000) {
       throw new Error("Invalid weight value");
     }
+    
+    if (!deviceUnit) {
+      throw new Error(`Unsupported device unit code: ${deviceUnitCode}`);
+    }
 
-    // The WH-C06 scale protocol appears to always send weight data in kg
-    // regardless of the display unit setting on the device itself.
-    // Therefore, we should always treat the raw data as kg and convert if needed.
-    const weightInKg = rawValue;
-    const weight = convertWeight(weightInKg, "kg", targetUnit);
+    // Convert weight from device unit to target unit if needed
+    const weight = convertWeight(rawWeight, deviceUnit, targetUnit);
 
-    return { weight, unit: targetUnit };
+    return { 
+      weight, 
+      unit: targetUnit,
+      // Additional metadata that could be useful for debugging
+      deviceUnit,
+      stable: stableFlag > 0,
+      rawWeight 
+    };
   } catch (e) {
     console.error("Error parsing weight data:", e);
     return undefined;
