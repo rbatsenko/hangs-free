@@ -57,8 +57,8 @@ describe('WeightUnitsContext', () => {
   it('formats weight correctly', () => {
     const { result } = renderHook(() => useWeightUnits(), { wrapper });
 
-    expect(result.current.formatWeight(10.456)).toBe('10.5');
-    expect(result.current.formatWeight(10)).toBe('10.0');
+    expect(result.current.formatWeight(10.456)).toBe('10.46');
+    expect(result.current.formatWeight(10)).toBe('10.00');
   });
 
   it('throws error when used outside provider', () => {

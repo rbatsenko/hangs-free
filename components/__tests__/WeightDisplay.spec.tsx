@@ -20,8 +20,8 @@ describe("WeightDisplay", () => {
       </WeightUnitsProvider>
     );
 
-    expect(screen.getByText("42.5kg")).toBeTruthy();
-    expect(screen.getByText("Max: 45.0kg")).toBeTruthy();
+    expect(screen.getByText("42.50kg")).toBeTruthy();
+    expect(screen.getByText("Max: 45.00kg")).toBeTruthy();
   });
 
   it("renders fallback text when no data is provided", () => {
@@ -49,7 +49,7 @@ describe("WeightDisplay", () => {
       </WeightUnitsProvider>
     );
 
-    expect(screen.getByText("100.0lb")).toBeTruthy();
-    expect(screen.getByText("Max: 120.0lb")).toBeTruthy();
+    expect(screen.getByText("100.00lb")).toBeTruthy();
+    expect(screen.getByText("Max: 120.00lb")).toBeTruthy();
   });
 });

@@ -32,7 +32,7 @@ describe("CycleWeightDisplay", () => {
       </WeightUnitsProvider>
     );
 
-    expect(screen.getByText("125.0kg at 02s 500ms")).toBeTruthy();
+    expect(screen.getByText("125.00kg at 02s 500ms")).toBeTruthy();
   });
 
   it("displays last point when cycle is complete and no current point", () => {
@@ -42,7 +42,7 @@ describe("CycleWeightDisplay", () => {
       </WeightUnitsProvider>
     );
 
-    expect(screen.getByText("150.0kg at 01s 000ms")).toBeTruthy();
+    expect(screen.getByText("150.00kg at 01s 000ms")).toBeTruthy();
   });
 
   it("displays current point when available and cycle is complete", () => {
@@ -58,7 +58,7 @@ describe("CycleWeightDisplay", () => {
       </WeightUnitsProvider>
     );
 
-    expect(screen.getByText("175.0kg at 02s 000ms")).toBeTruthy();
+    expect(screen.getByText("175.00kg at 02s 000ms")).toBeTruthy();
   });
 
   it("formats time correctly for different durations", () => {
@@ -73,6 +73,6 @@ describe("CycleWeightDisplay", () => {
       </WeightUnitsProvider>
     );
 
-    expect(screen.getByText("100.0kg at 59s 999ms")).toBeTruthy();
+    expect(screen.getByText("100.00kg at 59s 999ms")).toBeTruthy();
   });
 });
