@@ -3,6 +3,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react-native";
 
 import { WeightUnitsProvider } from "@/contexts/WeightUnitsContext";
+
 import { WeightDisplay } from "../WeightDisplay";
 
 const mockData = {

@@ -1,7 +1,7 @@
 import { StyleSheet, TextInput } from "react-native";
 
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { useWeightUnits } from "@/contexts/WeightUnitsContext";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 import { ThemedText, ThemedView } from "./ui";
 

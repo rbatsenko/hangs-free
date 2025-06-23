@@ -3,6 +3,7 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 
 import { WeightUnitsProvider } from "@/contexts/WeightUnitsContext";
+
 import { UserWeightInput } from "../UserWeightInput";
 
 jest.mock("@/hooks/useColorScheme", () => ({

@@ -3,6 +3,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react-native";
 
 import { WeightUnitsProvider } from "@/contexts/WeightUnitsContext";
+
 import { CycleWeightDisplay } from "../CycleWeightDisplay";
 
 const defaultProps = {

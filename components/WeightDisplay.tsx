@@ -2,8 +2,8 @@ import React from "react";
 
 import { Platform, StyleSheet } from "react-native";
 
-import { WeightDataWithMax } from "@/types/weight";
 import { useWeightUnits } from "@/contexts/WeightUnitsContext";
+import { WeightDataWithMax } from "@/types/weight";
 
 import { ThemedText, ThemedView } from "./ui";
 
