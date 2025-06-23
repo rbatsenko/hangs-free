@@ -2,6 +2,7 @@ import React from "react";
 
 import { fireEvent, render, screen } from "@testing-library/react-native";
 
+import { WeightUnitsProvider } from "@/contexts/WeightUnitsContext";
 import { UserWeightInput } from "../UserWeightInput";
 
 jest.mock("@/hooks/useColorScheme", () => ({
@@ -22,22 +23,34 @@ describe("UserWeightInput", () => {
   });
 
   it("renders the input with correct label", () => {
-    render(<UserWeightInput {...defaultProps} />);
+    render(
+      <WeightUnitsProvider>
+        <UserWeightInput {...defaultProps} />
+      </WeightUnitsProvider>
+    );
 
-    expect(screen.getByText("Your weight:")).toBeTruthy();
-    expect(screen.getByPlaceholderText("Weight")).toBeTruthy();
+    expect(screen.getByText("Your weight (kg):")).toBeTruthy();
+    expect(screen.getByPlaceholderText("Weight in kg")).toBeTruthy();
   });
 
   it("displays the provided value", () => {
-    render(<UserWeightInput {...defaultProps} value="75" />);
+    render(
+      <WeightUnitsProvider>
+        <UserWeightInput {...defaultProps} value="75" />
+      </WeightUnitsProvider>
+    );
 
     expect(screen.getByDisplayValue("75")).toBeTruthy();
   });
 
   it("calls onChangeText when input changes", async () => {
-    render(<UserWeightInput {...defaultProps} />);
+    render(
+      <WeightUnitsProvider>
+        <UserWeightInput {...defaultProps} />
+      </WeightUnitsProvider>
+    );
 
-    const input = screen.getByPlaceholderText("Weight");
+    const input = screen.getByPlaceholderText("Weight in kg");
     fireEvent.changeText(input, "80");
 
     expect(mockOnChangeText).toHaveBeenCalledWith("80");

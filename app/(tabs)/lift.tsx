@@ -65,7 +65,7 @@ const INITIAL_CYCLE_DATA: CycleData = {
 export default function LiftScreen() {
   const colorScheme = useColorScheme() ?? "light";
   const isLight = colorScheme === "light";
-  const { weightUnit } = useWeightUnits();
+  const { weightUnit, formatWeight, convertWeight } = useWeightUnits();
   
   const INITIAL_HAND_DATA: HandData = createInitialHandsData(weightUnit);
 
@@ -77,6 +77,7 @@ export default function LiftScreen() {
     INITIAL_CYCLE_DATA.left[0]
   );
   const [userWeight, setUserWeight] = useState("");
+  const [previousWeightUnit, setPreviousWeightUnit] = useState<WeightUnit>(weightUnit);
 
   const elapsedTime = useStopwatch(cycleStarted);
   const { weightData, weightDataPoints, reset } = useWeightData();
@@ -127,6 +128,16 @@ export default function LiftScreen() {
       right: { ...prev.right, unit: weightUnit },
     }));
   }, [weightUnit]);
+
+  // Convert user weight when units change
+  useEffect(() => {
+    if (weightUnit !== previousWeightUnit && userWeight && !isNaN(parseFloat(userWeight))) {
+      const currentWeight = parseFloat(userWeight);
+      const convertedWeight = convertWeight(currentWeight, previousWeightUnit, weightUnit);
+      setUserWeight(convertedWeight.toFixed(1));
+    }
+    setPreviousWeightUnit(weightUnit);
+  }, [weightUnit, previousWeightUnit, userWeight, convertWeight]);
 
   useEffect(() => {
     if (weightData && weightDataPoints.length > 0) {
@@ -195,8 +206,9 @@ export default function LiftScreen() {
 
   const summaryText = useMemo(
     () =>
-      `Left: ${handData.left.maxWeight}${handData.left.unit} ${percentages.left}\nRight: ${handData.right.maxWeight}${handData.right.unit} ${percentages.right}`,
+      `Left: ${formatWeight(handData.left.maxWeight)}${handData.left.unit} ${percentages.left}\nRight: ${formatWeight(handData.right.maxWeight)}${handData.right.unit} ${percentages.right}`,
     [
+      formatWeight,
       handData.left.maxWeight,
       handData.left.unit,
       handData.right.maxWeight,
@@ -218,7 +230,7 @@ export default function LiftScreen() {
         <ThemedView style={styles.summaryRow}>
           <ThemedView style={{ alignItems: "center" }}>
             <ThemedText style={styles.summaryText}>
-              Left: {handData.left.maxWeight}
+              Left: {formatWeight(handData.left.maxWeight)}
               {handData.left.unit}{" "}
             </ThemedText>
             <ThemedText style={styles.percentage}>
@@ -227,7 +239,7 @@ export default function LiftScreen() {
           </ThemedView>
           <ThemedView style={{ alignItems: "center" }}>
             <ThemedText style={styles.summaryText}>
-              Right: {handData.right.maxWeight}
+              Right: {formatWeight(handData.right.maxWeight)}
               {handData.right.unit}
             </ThemedText>
             <ThemedText style={styles.percentage}>
@@ -251,6 +263,7 @@ export default function LiftScreen() {
       </ThemedView>
     ),
     [
+      formatWeight,
       handData.left.maxWeight,
       handData.left.unit,
       handData.right.maxWeight,

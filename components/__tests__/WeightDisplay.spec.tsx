@@ -2,6 +2,7 @@ import React from "react";
 
 import { render, screen } from "@testing-library/react-native";
 
+import { WeightUnitsProvider } from "@/contexts/WeightUnitsContext";
 import { WeightDisplay } from "../WeightDisplay";
 
 const mockData = {
@@ -12,15 +13,23 @@ const mockData = {
 
 describe("WeightDisplay", () => {
   it("renders weight and max weight correctly", () => {
-    render(<WeightDisplay data={mockData} />);
+    render(
+      <WeightUnitsProvider>
+        <WeightDisplay data={mockData} />
+      </WeightUnitsProvider>
+    );
 
     expect(screen.getByText("42.5kg")).toBeTruthy();
-    expect(screen.getByText("Max: 45kg")).toBeTruthy();
+    expect(screen.getByText("Max: 45.0kg")).toBeTruthy();
   });
 
   it("renders fallback text when no data is provided", () => {
     // @ts-ignore - no data
-    render(<WeightDisplay data={undefined} />);
+    render(
+      <WeightUnitsProvider>
+        <WeightDisplay data={undefined} />
+      </WeightUnitsProvider>
+    );
 
     expect(screen.getByText("No data")).toBeTruthy();
     expect(screen.getByText("No max weight")).toBeTruthy();
@@ -33,9 +42,13 @@ describe("WeightDisplay", () => {
       unit: "lb" as const,
     };
 
-    render(<WeightDisplay data={lbData} />);
+    render(
+      <WeightUnitsProvider>
+        <WeightDisplay data={lbData} />
+      </WeightUnitsProvider>
+    );
 
-    expect(screen.getByText("100lb")).toBeTruthy();
-    expect(screen.getByText("Max: 120lb")).toBeTruthy();
+    expect(screen.getByText("100.0lb")).toBeTruthy();
+    expect(screen.getByText("Max: 120.0lb")).toBeTruthy();
   });
 });

@@ -1,6 +1,7 @@
 import { StyleSheet, TextInput } from "react-native";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useWeightUnits } from "@/contexts/WeightUnitsContext";
 
 import { ThemedText, ThemedView } from "./ui";
 
@@ -15,10 +16,11 @@ export const UserWeightInput = ({
 }: UserWeightInputProps) => {
   const colorScheme = useColorScheme() ?? "light";
   const isLight = colorScheme === "light";
+  const { weightUnit } = useWeightUnits();
 
   return (
     <ThemedView style={styles.userWeightContainer}>
-      <ThemedText>Your weight: </ThemedText>
+      <ThemedText>Your weight ({weightUnit}): </ThemedText>
       <TextInput
         style={{
           ...styles.input,
@@ -27,7 +29,7 @@ export const UserWeightInput = ({
         }}
         onChangeText={onChangeText}
         value={value}
-        placeholder="Weight"
+        placeholder={`Weight in ${weightUnit}`}
         placeholderTextColor="#808080"
         keyboardType="numeric"
       />
