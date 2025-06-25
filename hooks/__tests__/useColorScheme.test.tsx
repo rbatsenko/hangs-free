@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { renderHook } from '@testing-library/react-native';
 
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 

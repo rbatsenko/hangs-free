@@ -62,7 +62,7 @@ This project uses automated releases and changelog generation via [Release Pleas
 - `feat:` - New features (minor version bump)
 - `fix:` - Bug fixes (patch version bump)
 - `feat!:` or `fix!:` - Breaking changes (major version bump)
-- `docs:`, `style:`, `refactor:`, `test:`, `ci:`, `build:`, `chore:` - Other changes
+- `docs:`, `style:`, `refactor:`, `test:`, `ci:`, `build:`, `chore:` - Other changes (included in changelog)
 
 Example: `feat: add new weight tracking feature`
 

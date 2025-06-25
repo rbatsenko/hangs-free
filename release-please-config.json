@@ -14,7 +14,7 @@
         { "type": "ci", "section": "Continuous Integration", "hidden": false },
         { "type": "docs", "section": "Documentation", "hidden": false },
         { "type": "style", "section": "Styles", "hidden": false },
-        { "type": "chore", "section": "Miscellaneous Chores", "hidden": true }
+        { "type": "chore", "section": "Miscellaneous Chores", "hidden": false }
       ],
       "release-as": "0.1.13",
       "include-component-in-tag": false,
