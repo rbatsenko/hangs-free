@@ -48,6 +48,26 @@ npm run ts-check
 npm run lint
 ```
 
+## Releases & Changelog
+
+This project uses automated releases and changelog generation via [Release Please](https://github.com/googleapis/release-please). 
+
+### How it works:
+- **Conventional Commits**: All commits must follow [conventional commit format](https://www.conventionalcommits.org/)
+- **Automatic Releases**: When changes are pushed to `main`, Release Please creates/updates a release PR
+- **Changelog Generation**: The `CHANGELOG.md` file is automatically updated based on commit messages
+- **GitHub Releases**: When the release PR is merged, a new GitHub release is created automatically
+
+### Commit Types:
+- `feat:` - New features (minor version bump)
+- `fix:` - Bug fixes (patch version bump)
+- `feat!:` or `fix!:` - Breaking changes (major version bump)
+- `docs:`, `style:`, `refactor:`, `test:`, `ci:`, `build:`, `chore:` - Other changes
+
+Example: `feat: add new weight tracking feature`
+
+View the full changelog at [CHANGELOG.md](CHANGELOG.md).
+
 ## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on how to get started, code standards, and the development workflow.
@@ -57,7 +77,8 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature-name`
 3. Make your changes following our [code standards](CONTRIBUTING.md#code-standards)
-4. Run tests: `npm test -- --watchAll=false`
-5. Submit a pull request
+4. Use conventional commits: `git commit -m "feat: add your feature"`
+5. Run tests: `npm test -- --watchAll=false`
+6. Submit a pull request
 
 For more details, see [CONTRIBUTING.md](CONTRIBUTING.md).

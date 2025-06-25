@@ -13,7 +13,8 @@
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "ts-check": "tsc-files --noEmit",
     "prepare": "husky",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "release": "echo 'Releases are automated via Release Please. Push to main branch with conventional commits to trigger a release.'"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
