@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for commitlint
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,7 +34,13 @@ jobs:
         run: npm run lint
 
       - name: Commitlint
-        run: npx commitlint --from HEAD~1 --to HEAD --verbose
+        run: |
+          # Only run commitlint on push events (not on release PRs)
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            npx commitlint --from HEAD~1 --to HEAD --verbose
+          else
+            echo "Skipping commitlint on non-push event"
+          fi
 
       - name: Run tests
         run: npm test -- --watchAll=false
@@ -42,6 +50,8 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for release-please
       
       - uses: google-github-actions/release-please-action@v4
         id: release
