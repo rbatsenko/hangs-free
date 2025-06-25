@@ -63,6 +63,13 @@ This changelog is automatically generated based on [Conventional Commits](https:
 - Code cleanup and organization
 - Mock BLE for development
 
+## [0.1.11] - 2025-02-25
+
+### Miscellaneous Chores
+
+- Internal version bump for development builds
+- Package maintenance and fixes
+
 ## [0.1.10] - 2025-02-25
 
 ### Features

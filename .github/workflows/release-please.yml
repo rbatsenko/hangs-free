@@ -31,6 +31,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Commitlint
+        run: npx commitlint --from HEAD~1 --to HEAD --verbose
+
       - name: Run tests
         run: npm test -- --watchAll=false
 
