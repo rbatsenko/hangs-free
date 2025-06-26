@@ -2,7 +2,7 @@
   "expo": {
     "name": "Hangs Free",
     "slug": "hangs-free",
-    "version": "0.1.13",
+    "version": "0.1.14",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",

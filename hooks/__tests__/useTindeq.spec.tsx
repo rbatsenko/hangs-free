@@ -9,9 +9,18 @@ jest.mock("../useBLE", () => ({
   useBLE: jest.fn(),
 }));
 
+jest.mock("@/contexts/WeightUnitsContext", () => ({
+  useWeightUnits: jest.fn(() => ({
+    weightUnit: "kg",
+    convertWeight: (weight: number, fromUnit: string, toUnit: string) => weight,
+  })),
+}));
+
 // Mock Date.now to return a consistent timestamp for testing
 const mockTimestamp = 1234567890;
 jest.spyOn(Date, "now").mockImplementation(() => mockTimestamp);
+
+const mockUseWeightUnits = require("@/contexts/WeightUnitsContext").useWeightUnits;
 
 describe("useTindeq", () => {
   const mockBleManager = {
@@ -35,6 +44,12 @@ describe("useTindeq", () => {
       bleInitialized: true,
     });
     mockBleManager.connectToDevice.mockResolvedValue(mockDevice);
+    
+    // Reset WeightUnitsContext mock to default
+    mockUseWeightUnits.mockReturnValue({
+      weightUnit: "kg",
+      convertWeight: (weight: number, fromUnit: string, toUnit: string) => weight,
+    });
   });
 
   it("initializes with default values", () => {
@@ -277,5 +292,73 @@ describe("useTindeq", () => {
 
     expect(result.current.error).toBe("Failed to connect to Tindeq");
     expect(result.current.isLoading).toBe(false);
+  });
+
+  it("respects weight unit preference", () => {
+    mockUseWeightUnits.mockReturnValue({
+      weightUnit: "lb",
+      convertWeight: jest.fn((weight, fromUnit, toUnit) => {
+        if (fromUnit === "kg" && toUnit === "lb") {
+          return weight * 2.20462;
+        }
+        return weight;
+      }),
+    });
+
+    const { result } = renderHook(() => useTindeq());
+
+    expect(result.current.weightData.unit).toBe("lb");
+  });
+
+  it("converts weight data from kg to user's preferred unit", async () => {
+    const mockConvertWeight = jest.fn((weight, fromUnit, toUnit) => {
+      if (fromUnit === "kg" && toUnit === "lb") {
+        return weight * 2.20462;
+      }
+      return weight;
+    });
+
+    mockUseWeightUnits.mockReturnValue({
+      weightUnit: "lb",
+      convertWeight: mockConvertWeight,
+    });
+
+    const { result } = renderHook(() => useTindeq());
+
+    // Start scanning
+    act(() => {
+      result.current.scanAndConnect();
+    });
+
+    // Simulate device found during scan - this triggers connection
+    const scanCallback = mockBleManager.startDeviceScan.mock.calls[0][2];
+    
+    await act(async () => {
+      scanCallback(null, mockDevice);
+    });
+
+    // Now we should have a monitor callback
+    expect(mockDevice.monitorCharacteristicForService).toHaveBeenCalled();
+    
+    const monitorCallback = mockDevice.monitorCharacteristicForService.mock.calls[0][2];
+
+    // Simulate receiving weight data (1 kg = 2.20462 lb)
+    const weightInKg = 1.0;
+    const expectedWeightInLb = 2.20462;
+    
+    const buffer = Buffer.alloc(8);
+    buffer[0] = 0x01; // tag
+    buffer.writeFloatLE(weightInKg, 2);
+    const base64Data = buffer.toString("base64");
+    
+    act(() => {
+      monitorCallback(null, { value: base64Data });
+    });
+
+    expect(mockConvertWeight).toHaveBeenCalledWith(weightInKg, "kg", "lb");
+    expect(result.current.weightData).toEqual({
+      weight: expectedWeightInLb,
+      unit: "lb",
+    });
   });
 });

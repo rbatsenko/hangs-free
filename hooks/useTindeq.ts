@@ -4,6 +4,7 @@ import { Device } from "react-native-ble-plx";
 
 import { Buffer } from "buffer";
 
+import { useWeightUnits } from "@/contexts/WeightUnitsContext";
 import { WeightData, WeightDataPoint } from "@/types/weight";
 
 import { useBLE } from "./useBLE";
@@ -19,11 +20,12 @@ const COMMAND_STOP = Buffer.from([0x66, 0x00]).toString("base64");
 // const COMMAND_BATTERY = Buffer.from([0x6f, 0x00]).toString("base64");
 
 export const useTindeq = () => {
+  const { weightUnit, convertWeight } = useWeightUnits();
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [weightData, setWeightData] = useState<WeightData>({
     weight: 0,
-    unit: "kg",
+    unit: weightUnit,
   });
   const [weightDataPoints, setWeightDataPoints] = useState<WeightDataPoint[]>(
     []
@@ -33,9 +35,9 @@ export const useTindeq = () => {
   const { bleManager } = useBLE();
 
   const reset = useCallback(() => {
-    setWeightData({ weight: 0, unit: "kg" });
+    setWeightData({ weight: 0, unit: weightUnit });
     setWeightDataPoints([]);
-  }, []);
+  }, [weightUnit]);
 
   const setupDeviceMonitoring = useCallback((discoveredDevice: Device) => {
     setIsMonitoring(false);
@@ -62,10 +64,12 @@ export const useTindeq = () => {
             const timestamp = Date.now();
 
             if (weightInKg >= 0 && weightInKg < 300) {
-              setWeightData({ weight: weightInKg, unit: "kg" });
+              // Convert from kg to user's preferred unit
+              const weight = convertWeight(weightInKg, "kg", weightUnit);
+              setWeightData({ weight, unit: weightUnit });
               setWeightDataPoints((prev) => [
                 ...prev,
-                { weight: weightInKg, timestamp },
+                { weight, timestamp },
               ]);
             }
           } catch (e) {
@@ -89,7 +93,7 @@ export const useTindeq = () => {
         setError("Failed to start measurement");
         setIsLoading(false);
       });
-  }, []);
+  }, [convertWeight, weightUnit]);
 
   const connect = useCallback(
     async (deviceId: string) => {

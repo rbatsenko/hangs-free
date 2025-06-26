@@ -1,4 +1,5 @@
 import { ThemedText } from "@/components/ui";
+import { useWeightUnits } from "@/contexts/WeightUnitsContext";
 import { WeightDataPoint } from "@/types/weight";
 
 const formatElapsedTime = (ms: number) => {
@@ -28,6 +29,8 @@ export function CycleWeightDisplay({
   lastPoint,
   cycleStartTime,
 }: CycleWeightDisplayProps) {
+  const { formatWeight } = useWeightUnits();
+  
   const formatTimestamp = (timestamp: number) => {
     const elapsedMs = timestamp - cycleStartTime;
     return formatElapsedTime(elapsedMs);
@@ -36,7 +39,7 @@ export function CycleWeightDisplay({
   if (cycleStarted) {
     return (
       <ThemedText>
-        {currentWeight}
+        {formatWeight(currentWeight)}
         {unit} at {formatElapsedTime(elapsedTime)}
       </ThemedText>
     );
@@ -47,7 +50,7 @@ export function CycleWeightDisplay({
 
   return (
     <ThemedText>
-      {weight}
+      {formatWeight(weight)}
       {unit} at {formatTimestamp(timestamp)}
     </ThemedText>
   );

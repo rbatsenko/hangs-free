@@ -16,11 +16,25 @@ import {
   ThemedView,
 } from "@/components/ui";
 import { useWeightData } from "@/contexts/WeightDataContext";
+import { useWeightUnits, WeightUnit } from "@/contexts/WeightUnitsContext";
 import { useStopwatch } from "@/hooks";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { WeightDataPoint, WeightDataWithMax } from "@/types/weight";
 
 const getPercentage = (value: number, base: number) => (value / base) * 100;
+
+// Helper function to create initial hand data with specified unit
+const createInitialHandData = (unit: WeightUnit) => ({
+  weight: 0,
+  maxWeight: 0,
+  unit,
+});
+
+// Helper function to create complete initial hand data for both hands
+const createInitialHandsData = (unit: WeightUnit): HandData => ({
+  left: createInitialHandData(unit),
+  right: createInitialHandData(unit),
+});
 
 const now = Date.now();
 const INITIAL_CYCLE_HAND_DATA = [
@@ -48,14 +62,13 @@ const INITIAL_CYCLE_DATA: CycleData = {
   right: INITIAL_CYCLE_HAND_DATA,
 };
 
-const INITIAL_HAND_DATA: HandData = {
-  left: { weight: 0, maxWeight: 0, unit: "kg" },
-  right: { weight: 0, maxWeight: 0, unit: "kg" },
-};
-
 export default function LiftScreen() {
   const colorScheme = useColorScheme() ?? "light";
   const isLight = colorScheme === "light";
+  const { weightUnit, formatWeight, convertWeight } = useWeightUnits();
+  
+  const INITIAL_HAND_DATA: HandData = createInitialHandsData(weightUnit);
+
   const [selectedHand, setSelectedHand] = useState<HandType>("left");
   const [handData, setHandData] = useState<HandData>(INITIAL_HAND_DATA);
   const [cycleStarted, setCycleStarted] = useState(false);
@@ -64,6 +77,7 @@ export default function LiftScreen() {
     INITIAL_CYCLE_DATA.left[0]
   );
   const [userWeight, setUserWeight] = useState("");
+  const [previousWeightUnit, setPreviousWeightUnit] = useState<WeightUnit>(weightUnit);
 
   const elapsedTime = useStopwatch(cycleStarted);
   const { weightData, weightDataPoints, reset } = useWeightData();
@@ -85,9 +99,10 @@ export default function LiftScreen() {
   );
 
   const handleResetHand = useCallback(() => {
+    const initialHandData = createInitialHandData(weightUnit);
     setHandData((prev) => ({
       ...prev,
-      [selectedHand]: INITIAL_HAND_DATA[selectedHand],
+      [selectedHand]: initialHandData,
     }));
     setCycleStarted(false);
     setCycleData((prev) => ({
@@ -96,14 +111,33 @@ export default function LiftScreen() {
     }));
     setCurrentPoint(INITIAL_CYCLE_HAND_DATA[0]);
     reset();
-  }, [selectedHand, reset]);
+  }, [selectedHand, reset, weightUnit]);
 
   const handleResetAll = useCallback(() => {
-    setHandData(INITIAL_HAND_DATA);
+    const initialData = createInitialHandsData(weightUnit);
+    setHandData(initialData);
     setCycleStarted(false);
     setCycleData(INITIAL_CYCLE_DATA);
     reset();
-  }, [reset]);
+  }, [reset, weightUnit]);
+
+  // Update hand data units when weight unit changes
+  useEffect(() => {
+    setHandData((prev) => ({
+      left: { ...prev.left, unit: weightUnit },
+      right: { ...prev.right, unit: weightUnit },
+    }));
+  }, [weightUnit]);
+
+  // Convert user weight when units change
+  useEffect(() => {
+    if (weightUnit !== previousWeightUnit && userWeight && !isNaN(parseFloat(userWeight))) {
+      const currentWeight = parseFloat(userWeight);
+      const convertedWeight = convertWeight(currentWeight, previousWeightUnit, weightUnit);
+      setUserWeight(convertedWeight.toFixed(1));
+    }
+    setPreviousWeightUnit(weightUnit);
+  }, [weightUnit, previousWeightUnit, userWeight, convertWeight]);
 
   useEffect(() => {
     if (weightData && weightDataPoints.length > 0) {
@@ -172,8 +206,9 @@ export default function LiftScreen() {
 
   const summaryText = useMemo(
     () =>
-      `Left: ${handData.left.maxWeight}${handData.left.unit} ${percentages.left}\nRight: ${handData.right.maxWeight}${handData.right.unit} ${percentages.right}`,
+      `Left: ${formatWeight(handData.left.maxWeight)}${handData.left.unit} ${percentages.left}\nRight: ${formatWeight(handData.right.maxWeight)}${handData.right.unit} ${percentages.right}`,
     [
+      formatWeight,
       handData.left.maxWeight,
       handData.left.unit,
       handData.right.maxWeight,
@@ -195,7 +230,7 @@ export default function LiftScreen() {
         <ThemedView style={styles.summaryRow}>
           <ThemedView style={{ alignItems: "center" }}>
             <ThemedText style={styles.summaryText}>
-              Left: {handData.left.maxWeight}
+              Left: {formatWeight(handData.left.maxWeight)}
               {handData.left.unit}{" "}
             </ThemedText>
             <ThemedText style={styles.percentage}>
@@ -204,7 +239,7 @@ export default function LiftScreen() {
           </ThemedView>
           <ThemedView style={{ alignItems: "center" }}>
             <ThemedText style={styles.summaryText}>
-              Right: {handData.right.maxWeight}
+              Right: {formatWeight(handData.right.maxWeight)}
               {handData.right.unit}
             </ThemedText>
             <ThemedText style={styles.percentage}>
@@ -228,6 +263,7 @@ export default function LiftScreen() {
       </ThemedView>
     ),
     [
+      formatWeight,
       handData.left.maxWeight,
       handData.left.unit,
       handData.right.maxWeight,
