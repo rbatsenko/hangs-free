@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 This changelog is automatically generated based on [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [0.2.1](https://github.com/rbatsenko/hangs-free/compare/v0.2.0...v0.2.1) (2025-08-25)
+
+
+### Miscellaneous Chores
+
+* update app.json version ([1e81229](https://github.com/rbatsenko/hangs-free/commit/1e81229879e026f3d0edd31389a729530ede22a6))
+* update rn ([479c712](https://github.com/rbatsenko/hangs-free/commit/479c712f6df1703be4da83af4997bff99c6cda40))
+
 ## [0.2.0](https://github.com/rbatsenko/hangs-free/compare/v0.1.13...v0.2.0) (2025-08-25)
 
 
