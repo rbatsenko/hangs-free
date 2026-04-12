@@ -36,6 +36,7 @@ function ThemedApp() {
         >
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="debug" options={{ title: "BLE Debug" }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
