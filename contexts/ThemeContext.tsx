@@ -62,7 +62,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // When switching back to 'system', reset appearance to follow system setting
       // On native platforms (iOS/Android), null is officially supported and means follow system setting
       try {
-        Appearance.setColorScheme(null);
+        Appearance.setColorScheme('unspecified');
       } catch (error) {
         console.warn('Could not reset system appearance:', error);
       }
@@ -95,7 +95,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Determine the actual color scheme based on theme mode and system preference
   const colorScheme: ColorScheme = 
     themeMode === 'system' 
-      ? (systemColorScheme ?? 'light')
+      ? (systemColorScheme === 'dark' ? 'dark' : 'light')
       : themeMode === 'dark' 
         ? 'dark' 
         : 'light';
