@@ -21,7 +21,10 @@
       "include-v-in-tag": true,
       "versioning-strategy": "default",
       "bump-minor-pre-major": true,
-      "bump-patch-for-minor-pre-major": false
+      "bump-patch-for-minor-pre-major": false,
+      "extra-files": [
+        { "type": "json", "path": "app.json", "jsonpath": "$.expo.version" }
+      ]
     }
   }
 } 
