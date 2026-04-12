@@ -1,6 +1,6 @@
 {
   "name": "hangs-free",
-  "main": "expo-router/entry",
+  "main": "./index.ts",
   "version": "0.3.1",
   "scripts": {
     "start": "expo start",
