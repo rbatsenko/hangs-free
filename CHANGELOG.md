@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This changelog is automatically generated based on [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [0.3.0](https://github.com/rbatsenko/hangs-free/compare/v0.2.1...v0.3.0) (2026-04-12)
+
+
+### Features
+
+* add BLE debug screen for WH-C06 troubleshooting ([53565e3](https://github.com/rbatsenko/hangs-free/commit/53565e347bf9fea16634ac0bafbcb5cff1e89fcf))
+
 ## [0.2.1](https://github.com/rbatsenko/hangs-free/compare/v0.2.0...v0.2.1) (2025-08-25)
 
 
