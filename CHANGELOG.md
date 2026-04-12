@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 This changelog is automatically generated based on [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [0.3.2](https://github.com/rbatsenko/hangs-free/compare/v0.3.1...v0.3.2) (2026-04-12)
+
+
+### Bug Fixes
+
+* add buffer polyfill for sdk 55 ([281959a](https://github.com/rbatsenko/hangs-free/commit/281959a6d7f001408974dad4774bd2ab15f32fea))
+* configure metro resolver for @/* aliases on eas local build ([70a5e06](https://github.com/rbatsenko/hangs-free/commit/70a5e06231c2113ed8aa310a342e5ffd57c94d5a))
+* mirror mobile-coach expo sdk 55 config ([e531054](https://github.com/rbatsenko/hangs-free/commit/e5310546e92463cdd303959ddd8744e6a55746d7))
+* move typescript to dependencies for eas local build ([520bae6](https://github.com/rbatsenko/hangs-free/commit/520bae6edfa173fe6bebf260401f9a44c83989a9))
+* upgrade react-native-mmkv to v4 for rn 0.83 c++20 ([fa86b69](https://github.com/rbatsenko/hangs-free/commit/fa86b6946df73d48bec567197c0afa3ad222d0ac))
+* use explicit index.ts entry for eager bundle ([e572819](https://github.com/rbatsenko/hangs-free/commit/e572819cb5bbcc51351b9b88edb44d0e8528d119))
+
 ## [0.3.1](https://github.com/rbatsenko/hangs-free/compare/v0.3.0...v0.3.1) (2026-04-12)
 
 
