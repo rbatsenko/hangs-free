@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 This changelog is automatically generated based on [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [0.3.1](https://github.com/rbatsenko/hangs-free/compare/v0.3.0...v0.3.1) (2026-04-12)
+
+
+### Continuous Integration
+
+* bump node to 22 and refresh lockfile ([891c695](https://github.com/rbatsenko/hangs-free/commit/891c6952b4225ce9893d11290726ba873903ac82))
+* upgrade to npm 11 to read lockfile ([c9c0847](https://github.com/rbatsenko/hangs-free/commit/c9c0847efb427ef467e83b043e2930c09c1bcdda))
+
+
+### Miscellaneous Chores
+
+* regenerate lockfile with npm 10 ([3eeaf2c](https://github.com/rbatsenko/hangs-free/commit/3eeaf2cdeaca516bf992d5a4b051fc561888f7ba))
+* sync app.json version and add to release-please config ([f1f53b1](https://github.com/rbatsenko/hangs-free/commit/f1f53b1b41ad69fc6d887ea73b3164cb64c73e5e))
+* upgrade to expo sdk 55 ([f49312e](https://github.com/rbatsenko/hangs-free/commit/f49312e87c98b5f9dab3ccac3ce8df02e0c09341))
+
 ## [0.3.0](https://github.com/rbatsenko/hangs-free/compare/v0.2.1...v0.3.0) (2026-04-12)
 
 
