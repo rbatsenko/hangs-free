@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 import { useColorScheme as useSystemColorScheme, Appearance } from 'react-native';
-import { MMKV } from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type ColorScheme = 'light' | 'dark';
@@ -17,7 +17,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const THEME_STORAGE_KEY = 'theme_mode';
 
 // Create MMKV storage instance
-const storage = new MMKV();
+const storage = createMMKV();
 
 /**
  * ThemeProvider component that manages application theming
